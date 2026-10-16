@@ -24,7 +24,7 @@ jobs:
         uses: abozanona/pacman-contribution-graph@v5.0.0  # 无浮动大版本标签，钉到具体版本
         with:
           github_user_name: xianghongai
-          games: pacman
+          games: pacman  # 可选：breakout、galaga、puzzle-bobble、bomberman、minesweeper
 
       - name: Generate Snake Animation (light + dark)
         uses: Platane/snk@v3
