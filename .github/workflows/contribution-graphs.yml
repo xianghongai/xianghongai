@@ -1,0 +1,43 @@
+name: Generate Contribution Graphs
+
+on:
+  schedule:
+    - cron: "0 0 * * *"  # 每天 UTC 0 点运行
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 推送 output 分支需要写权限
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      # 吃豆人与贪吃蛇都输出到 dist/，最后一次性推送，避免互相覆盖 output 分支
+      - name: Generate Pacman Graph (light + dark)
+        uses: abozanona/pacman-contribution-graph@v5.0.0  # 无浮动大版本标签，钉到具体版本
+        with:
+          github_user_name: xianghongai
+          games: pacman
+
+      - name: Generate Snake Animation (light + dark)
+        uses: Platane/snk@v3
+        with:
+          github_user_name: xianghongai
+          outputs: |
+            dist/github-contribution-grid-snake.svg
+            dist/github-contribution-grid-snake-dark.svg
+
+      - name: Push to Output Branch
+        uses: crazy-max/ghaction-github-pages@v5
+        with:
+          target_branch: output
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
